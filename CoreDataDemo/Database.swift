@@ -69,15 +69,26 @@ class Database :NSObject{
     
     func fetchNames() -> [Person] {
         var names = [Person]()
-        let namesFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+        let namesFetch = NSFetchRequest<Person>(entityName: "Person")
         do {
-            let fetchedNames = try persistentContainer.viewContext.fetch(namesFetch) as! [Person]
-            let nameString = fetchedNames.map{ $0}
-            names.append(contentsOf: nameString)
+            let fetchedNames = try persistentContainer.viewContext.fetch(namesFetch)
+            names = fetchedNames.flatMap{ $0}
         } catch {
             fatalError("Failed to fetch employees: \(error)")
         }
         return names
+    }
+    
+    func deleteNames(withRow:Int) -> Void {
+        let namesFetch = NSFetchRequest<Person>(entityName: "Person")
+        do {
+            let fetchedNames = try persistentContainer.viewContext.fetch(namesFetch)
+            persistentContainer.viewContext.delete(fetchedNames[withRow])
+                try persistentContainer.viewContext.save()
+            
+        } catch {
+            fatalError("Failed to fetch employees: \(error)")
+        }
     }
 }
 
