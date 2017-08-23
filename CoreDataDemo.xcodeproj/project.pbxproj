@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		69044F011F4C2BF4000FC112 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69044F001F4C2BF4000FC112 /* Assets.xcassets */; };
+		69044F031F4D5980000FC112 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69044F021F4D5980000FC112 /* Model.swift */; };
 		6962AD261F4BFD070076A9A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6962AD251F4BFD070076A9A5 /* AppDelegate.swift */; };
 		6962AD281F4BFD070076A9A5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6962AD271F4BFD070076A9A5 /* ViewController.swift */; };
 		6962AD2B1F4BFD070076A9A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6962AD291F4BFD070076A9A5 /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		69044F001F4C2BF4000FC112 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../.Trash/Assets.xcassets; sourceTree = "<group>"; };
+		69044F021F4D5980000FC112 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		6962AD221F4BFD070076A9A5 /* CoreDataDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6962AD251F4BFD070076A9A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6962AD271F4BFD070076A9A5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				6962AD251F4BFD070076A9A5 /* AppDelegate.swift */,
 				6962AD501F4BFE6A0076A9A5 /* Database.swift */,
 				6962AD271F4BFD070076A9A5 /* ViewController.swift */,
+				69044F021F4D5980000FC112 /* Model.swift */,
 				6962AD521F4C02F80076A9A5 /* SecondViewController.swift */,
 				6962AD291F4BFD070076A9A5 /* Main.storyboard */,
 				6962AD311F4BFD070076A9A5 /* LaunchScreen.storyboard */,
@@ -206,6 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69044F031F4D5980000FC112 /* Model.swift in Sources */,
 				6962AD281F4BFD070076A9A5 /* ViewController.swift in Sources */,
 				6962AD2E1F4BFD070076A9A5 /* CoreDataDemo.xcdatamodeld in Sources */,
 				6962AD511F4BFE6A0076A9A5 /* Database.swift in Sources */,
