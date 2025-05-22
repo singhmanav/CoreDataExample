@@ -46,11 +46,18 @@ extension ViewController: UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let removeAction = UITableViewRowAction(style: .destructive, title: "") { action, indexPath in
-            Database.DBinstance.deleteNames(withRow: indexPath.row)
-            tableView.performBatchUpdates({
-                self.model.names.remove(at: indexPath.row)
-                self.tableView.deleteRows(at: [indexPath], with: .middle)
-            }, completion: nil)
+            do {
+                try Database.DBinstance.deleteNames(withRow: indexPath.row)
+                tableView.performBatchUpdates({
+                    self.model.names.remove(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .middle)
+                }, completion: nil)
+            } catch {
+                print("Error deleting name: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+                let alert = UIAlertController(title: "Error", message: "Failed to delete name. Please try again.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
         
         let img: UIImage = UIImage(named: "remove")!
@@ -112,7 +119,10 @@ extension ViewController:UITableViewDropDelegate{
         }
         
         coordinator.session.loadObjects(ofClass: NSString.self) { items in
-            let stringItems = items as! [String]
+            guard let stringItems = items as? [String] else {
+                print("Error: Failed to load string items from drop session or items were not strings.")
+                return
+            }
             
             var indexPaths = [IndexPath]()
             for (index, item) in stringItems.enumerated() {

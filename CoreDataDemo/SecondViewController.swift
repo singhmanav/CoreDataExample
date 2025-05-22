@@ -23,7 +23,21 @@ class SecondViewController: UIViewController {
     
 
     @IBAction func save(_ sender: Any) {
-        Database.DBinstance.saveName(nameTF.text!)
-        self.navigationController?.popViewController(animated: true)
+        guard let nameToSave = nameTF.text, !nameToSave.isEmpty else {
+            let alert = UIAlertController(title: "Input Error", message: "Name cannot be empty.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        do {
+            try Database.DBinstance.saveName(nameToSave)
+            self.navigationController?.popViewController(animated: true)
+        } catch {
+            print("Error saving name: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+            let alert = UIAlertController(title: "Error", message: "Failed to save name. Please ensure the input is valid and try again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }

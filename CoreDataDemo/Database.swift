@@ -46,25 +46,28 @@ class Database :NSObject{
     
     // MARK: - Core Data Saving support
     
-    func saveContext () {
+    func saveContext() throws {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                print("Error saving context: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+                throw error
             }
         }
     }
     
     
-    func saveName(_ name:String) -> Void {
+    func saveName(_ name:String) throws {
         let person = NSEntityDescription.insertNewObject(forEntityName: "Person", into: persistentContainer.viewContext) as! Person
         person.name = name
-        saveContext()
+        do {
+            try saveContext()
+        } catch {
+            print("Error saving name (\(name)): \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+            throw error
+        }
     }
     
     func fetchNames() -> [Person] {
@@ -74,20 +77,29 @@ class Database :NSObject{
             let fetchedNames = try persistentContainer.viewContext.fetch(namesFetch)
             names = fetchedNames.flatMap{ $0}
         } catch {
-            fatalError("Failed to fetch employees: \(error)")
+            print("Failed to fetch names: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+            // Return an empty array in case of an error.
         }
         return names
     }
     
-    func deleteNames(withRow:Int) -> Void {
+    func deleteNames(withRow:Int) throws {
         let namesFetch = NSFetchRequest<Person>(entityName: "Person")
+        let context = persistentContainer.viewContext
         do {
-            let fetchedNames = try persistentContainer.viewContext.fetch(namesFetch)
-            persistentContainer.viewContext.delete(fetchedNames[withRow])
-                try persistentContainer.viewContext.save()
-            
+            let fetchedNames = try context.fetch(namesFetch)
+            if fetchedNames.indices.contains(withRow) {
+                context.delete(fetchedNames[withRow])
+                try context.save() // This save is specific to the delete operation
+            } else {
+                print("Error deleting name: index out of bounds \(withRow)")
+                // Consider throwing a custom error here if appropriate
+                // For now, just printing and not attempting to delete / save
+                return // Or throw a specific error like AppError.indexOutOfBounds
+            }
         } catch {
-            fatalError("Failed to fetch employees: \(error)")
+            print("Error deleting name at row \(withRow): \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+            throw error
         }
     }
 }
