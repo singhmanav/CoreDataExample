@@ -11,9 +11,17 @@ import CoreData
 class SecondViewController: UIViewController {
     
     @IBOutlet weak var nameTF: UITextField!
+    var personToEdit: Person? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        if let person = personToEdit {
+            nameTF.text = person.name
+            self.title = "Edit Name"
+        } else {
+            self.title = "Add Name"
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -30,14 +38,28 @@ class SecondViewController: UIViewController {
             return
         }
         
-        do {
-            try Database.DBinstance.saveName(nameToSave)
-            self.navigationController?.popViewController(animated: true)
-        } catch {
-            print("Error saving name: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
-            let alert = UIAlertController(title: "Error", message: "Failed to save name. Please ensure the input is valid and try again.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+        if let person = personToEdit {
+            // Edit mode
+            do {
+                try Database.DBinstance.updateName(for: person.objectID, with: nameToSave)
+                self.navigationController?.popViewController(animated: true)
+            } catch {
+                print("Error updating name: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+                let alert = UIAlertController(title: "Error", message: "Failed to update name. Please try again.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+        } else {
+            // Add mode
+            do {
+                try Database.DBinstance.saveName(nameToSave)
+                self.navigationController?.popViewController(animated: true)
+            } catch {
+                print("Error saving name: \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+                let alert = UIAlertController(title: "Error", message: "Failed to save name. Please ensure the input is valid and try again.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
 }

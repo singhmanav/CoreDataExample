@@ -59,11 +59,12 @@ class Database :NSObject{
     }
     
     
-    func saveName(_ name:String) throws {
+    func saveName(_ name:String) throws -> Person {
         let person = NSEntityDescription.insertNewObject(forEntityName: "Person", into: persistentContainer.viewContext) as! Person
         person.name = name
         do {
             try saveContext()
+            return person
         } catch {
             print("Error saving name (\(name)): \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
             throw error
@@ -100,6 +101,30 @@ class Database :NSObject{
         } catch {
             print("Error deleting name at row \(withRow): \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
             throw error
+        }
+    }
+
+    func updateName(for objectID: NSManagedObjectID, with newName: String) throws {
+        let context = persistentContainer.viewContext
+        do {
+            guard let personToUpdate = try context.existingObject(with: objectID) as? Person else {
+                // If existingObject(with:) returns nil (shouldn't happen if ID is valid but object deleted)
+                // or if the cast to Person fails.
+                print("Error: Could not find or cast Person object with ID \(objectID) for update.")
+                throw NSError(domain: "Database", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Failed to find or cast Person object for update."])
+            }
+            
+            personToUpdate.name = newName
+            try saveContext() // Propagates errors from saveContext
+            print("Successfully updated name for objectID: \(objectID) to '\(newName)'")
+        } catch let error as NSError where error.domain == "Database" && error.code == 1001 {
+            // Re-throw custom error if it's the one we created
+            throw error
+        } catch {
+            // Handles errors from context.existingObject(with:) if it throws (e.g., invalid objectID)
+            // or errors from saveContext()
+            print("Error updating name for objectID \(objectID): \(error.localizedDescription), userInfo: \((error as NSError).userInfo)")
+            throw error // Re-throw any other errors
         }
     }
 }
